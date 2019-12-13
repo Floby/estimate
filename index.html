@@ -3,8 +3,10 @@
 <head>
 <style>
 body {
-  font-family: Ubuntu, sans-serif
+  font-family: Ubuntu, sans-serif;
   overflow: hidden;
+  --primary-color: #766288;
+  --secondary-color: #e1f3f2;
 }
 .deck {
   transform-style: preserve-3d;
@@ -45,13 +47,13 @@ body {
   top: 0; left: 0;
   height: 100%;
   width: 100%;
-  background: #e1f3f2;
+  background: var(--secondary-color);
   box-sizing: border-box;
 
-  border: 1px solid #766288;
+  border: 1px solid var(--primary-color);
 
   font-weight: bold;
-  color: #766288;
+  color: var(--primary-color);
   text-align: center;
   line-height: .8em;
 
@@ -141,6 +143,11 @@ body {
 iterate(1000)
 
 async function iterate (interval) {
+  let limit = 80
+  const { limit: param } = query()
+  if (Number(param)) {
+    limit = Number(param)
+  }
   const suite = fibonacci()
   let value
   value = suite.next().value
@@ -150,7 +157,7 @@ async function iterate (interval) {
 
   await delay(interval)
   await show(1)
-  for(let i = 2; i<80; ++i) {
+  for(let i = 2; i<limit; ++i) {
     const { value } = suite.next()
     const nextCardIndex = i % 2
     setValue(nextCardIndex, value)
@@ -205,6 +212,15 @@ function delay(ms) {
   return new Promise((resolve) => {
     setTimeout(resolve, ms)
   })
+}
+
+function query() {
+  const search = location.search.substr(1)
+    debugger
+  const query = search.split('&')
+    .map((entry) => entry.split('='))
+    .reduce((query, [key, value]) => ({ ...query, [key]: value }), {})
+  return query
 }
 
 </script>
